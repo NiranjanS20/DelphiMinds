@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DelphiMinds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/auth-utils.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body class="bg-blue-50">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-blue-900 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out" id="sidebar">
+        <div class="flex items-center justify-center h-16 bg-blue-900">
+            <a href="/" class="text-xl font-bold text-white hover:text-cyan-200 transition-colors">
+                DelphiMinds
+            </a>
+        </div>
+        <nav class="mt-8">
+            <div class="px-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center px-4 py-2 text-white bg-blue-800 rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="insights.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Job Insights
+                </a>
+                <a href="community.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    Community
+                </a>
+                <a href="roadmap.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    Career Roadmap
+                </a>
+                <a href="resume.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Resume Analyzer
+                </a>
+                <a href="psychometric.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    Career Test
+                </a>
+                <a href="chat.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    AI Chatbot
+                </a>
+                <a href="gamification.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                    Achievements
+                </a>
+            </div>
+        </nav>
+        <div class="absolute bottom-0 w-full p-4">
+            <button onclick="logout()" class="w-full flex items-center px-4 py-2 text-red-400 hover:bg-red-900 hover:text-red-200 rounded-lg">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Top Navigation -->
+        <nav class="bg-white shadow-sm border-b">
+            <div class="flex items-center justify-between h-16 px-4">
+                <button onclick="toggleSidebar()" class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600">Welcome back!</span>
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                        <span class="text-white text-sm font-medium" id="userInitial">U</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 p-6">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+                <p class="mt-2 text-gray-600">Track your skills, get recommendations, and plan your career journey</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Skills Added</p>
+                            <p class="text-2xl font-semibold text-gray-900" id="skillsCount">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-100 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Recommendations</p>
+                            <p class="text-2xl font-semibold text-gray-900" id="recommendationsCount">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-yellow-100 rounded-lg">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Badges Earned</p>
+                            <p class="text-2xl font-semibold text-gray-900" id="badgesCount">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-purple-100 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Learning Streak</p>
+                            <p class="text-2xl font-semibold text-gray-900" id="streakCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Skills Management -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Manage Your Skills</h2>
+                    <form id="addSkillForm" class="mb-4">
+                        <div class="flex gap-2">
+                            <select id="skillSelect" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select a skill...</option>
+                            </select>
+                            <input id="skillLevel" type="number" min="1" max="5" value="3" 
+                                   class="w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   placeholder="Level" />
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                Add
+                            </button>
+                        </div>
+                    </form>
+                    <div id="mySkills" class="space-y-2 max-h-64 overflow-y-auto">
+                        <!-- Skills will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Career Recommendations</h2>
+                        <button id="refreshRecs" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            Get Recommendations
+                        </button>
+                    </div>
+                    <div id="recs" class="space-y-3">
+                        <!-- Recommendations will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skill Gap Visualization -->
+            <div class="mt-8 bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Skill Gap Analysis</h2>
+                <canvas id="skillsChart" height="120"></canvas>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-8 bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <a href="insights.html" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="p-2 bg-blue-100 rounded-lg mr-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">Job Market Insights</h3>
+                            <p class="text-sm text-gray-600">Explore current job trends and opportunities</p>
+                        </div>
+                    </a>
+                    <a href="roadmap.html" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="p-2 bg-green-100 rounded-lg mr-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">Career Roadmap</h3>
+                            <p class="text-sm text-gray-600">Plan your learning journey</p>
+                        </div>
+                    </a>
+                    <a href="chat.html" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="p-2 bg-purple-100 rounded-lg mr-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">AI Chatbot</h3>
+                            <p class="text-sm text-gray-600">Get instant career advice</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-40 hidden" onclick="toggleSidebar()"></div>
+
+    <script src="app.js"></script>
+    <script>
+        let skillsChart;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function updateStats() {
+            // Update skills count
+            const skillsList = document.getElementById('mySkills');
+            const skillsCount = skillsList.children.length;
+            document.getElementById('skillsCount').textContent = skillsCount;
+
+            // Update recommendations count
+            const recsList = document.getElementById('recs');
+            const recsCount = recsList.children.length;
+            document.getElementById('recommendationsCount').textContent = recsCount;
+
+            // Load gamification stats
+            loadGamificationStats();
+        }
+
+        async function loadGamificationStats() {
+            try {
+                const token = localStorage.getItem('access_token');
+                
+                // Load badges
+                const badgesResponse = await fetch('/gamification/my-badges/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (badgesResponse.ok) {
+                    const badges = await badgesResponse.json();
+                    document.getElementById('badgesCount').textContent = badges.length;
+                }
+
+                // Load streak
+                const streakResponse = await fetch('/gamification/streak/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (streakResponse.ok) {
+                    const streak = await streakResponse.json();
+                    document.getElementById('streakCount').textContent = streak.current_streak || 0;
+                }
+            } catch (error) {
+                console.error('Error loading gamification stats:', error);
+            }
+        }
+
+        // Load user skills
+        async function loadSkills() {
+            try {
+                const skillsResponse = await authenticatedFetch('/skills/my/');
+                if (skillsResponse.ok) {
+                    const skillsData = await skillsResponse.json();
+                    document.getElementById('skillsCount').textContent = skillsData.length || 0;
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+            }
+        }
+
+        // Load career recommendations
+        async function loadRecommendations() {
+            try {
+                const recsResponse = await authenticatedFetch('/recommendations/');
+                if (recsResponse.ok) {
+                    const recsData = await recsResponse.json();
+                    document.getElementById('recommendationsCount').textContent = recsData.length || 0;
+                }
+            } catch (error) {
+                console.error('Error loading recommendations:', error);
+            }
+        }
+
+        // Update dashboard statistics
+        async function updateStats() {
+            try {
+                // These would be real API calls in a full implementation
+                document.getElementById('badgesCount').textContent = '0';
+                document.getElementById('streakCount').textContent = '0';
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Protect page - redirect to login if not authenticated
+            if (!protectPage()) {
+                return;
+            }
+            
+            loadSkills();
+            loadRecommendations();
+            updateStats();
+            
+            // Set user initial from stored user data
+            const userData = getUserData();
+            if (userData && userData.username) {
+                document.getElementById('userInitial').textContent = userData.username.charAt(0).toUpperCase();
+            }
+        });
+    </script>
+</body>
+</html>

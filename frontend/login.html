@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - DelphiMinds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-blue-50 text-gray-900">
+    <div class="min-h-screen flex items-center justify-center">
+      <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md border border-blue-200">
+        <div class="text-center mb-6">
+          <a href="/" class="text-2xl font-bold text-blue-900 hover:text-blue-700 transition-colors">
+            DelphiMinds
+          </a>
+          <h1 class="text-2xl font-semibold mt-4 text-gray-800">Welcome Back</h1>
+          <p class="text-gray-600 mt-2">Sign in to your account</p>
+        </div>
+        
+        <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
+        <div id="success-message" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"></div>
+        
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label for="login-username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+            <input id="login-username" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your username" required />
+          </div>
+          <div>
+            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <input id="login-password" type="password" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your password" required />
+          </div>
+          <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white rounded-lg p-3 font-medium transition-colors" id="login-btn">
+            Sign In
+          </button>
+        </form>
+        
+        <p class="text-sm mt-6 text-center text-gray-600">
+          Don't have an account? 
+          <a class="text-blue-600 hover:text-blue-800 font-medium" href="signup.html">Create one</a>
+        </p>
+      </div>
+    </div>
+    
+    <script>
+      // Get CSRF token
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      
+      function showMessage(message, type = 'error') {
+        const errorDiv = document.getElementById('error-message');
+        const successDiv = document.getElementById('success-message');
+        
+        // Hide both messages first
+        errorDiv.classList.add('hidden');
+        successDiv.classList.add('hidden');
+        
+        if (type === 'success') {
+          successDiv.textContent = message;
+          successDiv.classList.remove('hidden');
+        } else {
+          errorDiv.textContent = message;
+          errorDiv.classList.remove('hidden');
+        }
+      }
+      
+      // Handle login form submission
+      document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        const submitBtn = document.getElementById('login-btn');
+        
+        // Show loading state
+        submitBtn.textContent = 'Signing In...';
+        submitBtn.disabled = true;
+        
+        try {
+          const response = await fetch('/auth/login/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken') || ''
+            },
+            body: JSON.stringify({
+              username: username,
+              password: password
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok) {
+            // Store tokens
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+            localStorage.setItem('user_data', JSON.stringify(data.user));
+            
+            showMessage('Login successful! Redirecting...', 'success');
+            
+            // Redirect to dashboard after short delay
+            setTimeout(() => {
+              window.location.href = '/dashboard.html';
+            }, 1000);
+            
+          } else {
+            showMessage(data.detail || 'Login failed. Please check your credentials.');
+          }
+          
+        } catch (error) {
+          console.error('Login error:', error);
+          showMessage('Network error. Please try again.');
+        } finally {
+          // Reset button state
+          submitBtn.textContent = 'Sign In';
+          submitBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
+
+

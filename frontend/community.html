@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - DelphiMinds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/auth-utils.js"></script>
+</head>
+<body class="bg-blue-50">
+    <nav class="bg-blue-900 shadow-sm border-b border-blue-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold text-white hover:text-cyan-200 transition-colors">
+                        DelphiMinds
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="dashboard.html" class="text-gray-200 hover:text-white">Dashboard</a>
+                    <a href="insights.html" class="text-gray-200 hover:text-white">Insights</a>
+                    <a href="community.html" class="text-cyan-200 font-medium">Community</a>
+                    <a href="chat.html" class="text-gray-200 hover:text-white">Chat</a>
+                    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Community</h1>
+            <p class="mt-2 text-gray-600">Connect with peers, share experiences, and benchmark your progress</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Create Post -->
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Share Your Experience</h2>
+                    <form id="createPostForm">
+                        <div class="mb-4">
+                            <input type="text" id="postTitle" placeholder="Post title" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <textarea id="postBody" rows="4" placeholder="What's on your mind?" 
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            Post
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Posts Feed -->
+                <div id="postsFeed" class="space-y-6">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Peer Benchmarking -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Peer Benchmarking</h3>
+                    <div id="benchmarkingData">
+                        <!-- Benchmarking data will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Top Performers</h3>
+                    <div id="leaderboard">
+                        <!-- Leaderboard will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        async function loadCommunityData() {
+            try {
+                const token = localStorage.getItem('access_token');
+                
+                // Load posts
+                const postsResponse = await fetch('/community/posts/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (postsResponse.ok) {
+                    const posts = await postsResponse.json();
+                    updatePostsFeed(posts);
+                }
+
+                // Load benchmarking data
+                const benchmarkResponse = await fetch('/community/benchmarking/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (benchmarkResponse.ok) {
+                    const benchmark = await benchmarkResponse.json();
+                    updateBenchmarkingData(benchmark);
+                }
+
+                // Load leaderboard
+                const leaderboardResponse = await fetch('/gamification/leaderboard/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (leaderboardResponse.ok) {
+                    const leaderboard = await leaderboardResponse.json();
+                    updateLeaderboard(leaderboard);
+                }
+
+            } catch (error) {
+                console.error('Error loading community data:', error);
+                showError('Failed to load community data');
+            }
+        }
+
+        function updatePostsFeed(posts) {
+            const container = document.getElementById('postsFeed');
+            container.innerHTML = posts.map(post => `
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-semibold">${post.title}</h3>
+                        <span class="text-sm text-gray-500">${new Date(post.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">${post.body}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">by ${post.author_name}</span>
+                        <button onclick="loadComments(${post.id})" class="text-blue-600 hover:text-blue-800">
+                            ${post.comments?.length || 0} comments
+                        </button>
+                    </div>
+                    <div id="comments-${post.id}" class="mt-4 hidden">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateBenchmarkingData(benchmark) {
+            const container = document.getElementById('benchmarkingData');
+            container.innerHTML = `
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-600">${benchmark.rank || 'N/A'}</div>
+                    <div class="text-sm text-gray-600">Your Rank</div>
+                    <div class="mt-2 text-lg font-semibold">${benchmark.total_skill_score || 0}</div>
+                    <div class="text-sm text-gray-600">Total Score</div>
+                </div>
+            `;
+        }
+
+        function updateLeaderboard(leaderboard) {
+            const container = document.getElementById('leaderboard');
+            container.innerHTML = leaderboard.map((entry, index) => `
+                <div class="flex items-center justify-between py-2 ${index < 3 ? 'font-semibold' : ''}">
+                    <span class="flex items-center">
+                        <span class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-sm mr-2">
+                            ${index + 1}
+                        </span>
+                        ${entry.username}
+                    </span>
+                    <span class="text-blue-600">${entry.total_points}</span>
+                </div>
+            `).join('');
+        }
+
+        async function loadComments(postId) {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`/community/posts/${postId}/comments/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const comments = await response.json();
+                    const container = document.getElementById(`comments-${postId}`);
+                    container.innerHTML = comments.map(comment => `
+                        <div class="bg-gray-50 p-3 rounded mb-2">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">${comment.author_name}</span>
+                                <span class="text-xs text-gray-500">${new Date(comment.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">${comment.body}</p>
+                        </div>
+                    `).join('');
+                    container.classList.toggle('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading comments:', error);
+            }
+        }
+
+        // Handle post creation
+        document.getElementById('createPostForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('postTitle').value;
+            const body = document.getElementById('postBody').value;
+            
+            if (!title || !body) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('/community/posts/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, body })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('postTitle').value = '';
+                    document.getElementById('postBody').value = '';
+                    loadCommunityData(); // Reload posts
+                } else {
+                    const error = await response.json();
+                    showError(error.detail || 'Failed to create post');
+                }
+            } catch (error) {
+                console.error('Error creating post:', error);
+                showError('Failed to create post');
+            }
+        });
+
+        // Load community data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Protect page - redirect to login if not authenticated
+            if (!protectPage()) {
+                return;
+            }
+            loadCommunityData();
+        });
+    </script>
+</body>
+</html>

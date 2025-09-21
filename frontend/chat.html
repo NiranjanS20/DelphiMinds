@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot - DelphiMinds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/auth-utils.js"></script>
+</head>
+<body class="bg-blue-50">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-blue-900 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out" id="sidebar">
+        <div class="flex items-center justify-center h-16 bg-blue-900">
+            <a href="/" class="text-xl font-bold text-white hover:text-cyan-200 transition-colors">
+                DelphiMinds
+            </a>
+        </div>
+        <nav class="mt-8">
+            <div class="px-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <span class="mr-3">📊</span> Dashboard
+                </a>
+                <a href="insights.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <span class="mr-3">📈</span> Job Insights
+                </a>
+                <a href="community.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <span class="mr-3">👥</span> Community
+                </a>
+                <a href="roadmap.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <span class="mr-3">🗺️</span> Career Roadmap
+                </a>
+                <a href="resume.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <span class="mr-3">📄</span> Resume Analyzer
+                </a>
+                <a href="psychometric.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <span class="mr-3">🧠</span> Career Test
+                </a>
+                <a href="chat.html" class="flex items-center px-4 py-2 text-white bg-blue-800 rounded-lg">
+                    <span class="mr-3">💬</span> AI Chatbot
+                </a>
+                <a href="gamification.html" class="flex items-center px-4 py-2 text-gray-200 hover:bg-blue-800 hover:text-white rounded-lg">
+                    <span class="mr-3">🏆</span> Achievements
+                </a>
+            </div>
+        </nav>
+        <div class="absolute bottom-0 w-full p-4">
+            <button onclick="logout()" class="w-full flex items-center px-4 py-2 text-red-400 hover:bg-red-900 hover:text-red-200 rounded-lg">
+                <span class="mr-3">🚪</span> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-screen">
+        <!-- Top Navigation -->
+        <nav class="bg-white shadow-sm border-b">
+            <div class="flex items-center justify-between h-16 px-4">
+                <button onclick="toggleSidebar()" class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                    ☰
+                </button>
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-xl font-semibold text-gray-900">AI Career Assistant</h1>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-sm text-gray-600">Online</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Chat Interface -->
+        <div class="flex-1 flex flex-col">
+            <!-- Quick Actions -->
+            <div class="bg-gray-50 p-4 border-b">
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="sendQuickMessage('What skills should I learn for software development?')" 
+                            class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200">
+                        Skills Advice
+                    </button>
+                    <button onclick="sendQuickMessage('Help me choose a career path')" 
+                            class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm hover:bg-green-200">
+                        Career Guidance
+                    </button>
+                    <button onclick="sendQuickMessage('How can I improve my resume?')" 
+                            class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200">
+                        Resume Tips
+                    </button>
+                    <button onclick="sendQuickMessage('What are the latest job market trends?')" 
+                            class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm hover:bg-yellow-200">
+                        Market Trends
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chatMessages">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-blue-600">🤖</span>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-3 max-w-md">
+                        <p class="text-sm text-gray-800">
+                            Hello! I'm your AI career assistant. I can help you with career guidance, skill recommendations, resume tips, and much more.
+                            <br><br>
+                            🎆 <strong>Demo Mode:</strong> Try me out! I'll provide helpful career advice even without logging in.
+                            <br><br>
+                            Try asking me:
+                            <br>• "What skills should I learn for software development?"
+                            <br>• "How can I improve my resume?"
+                            <br>• "Help me prepare for interviews"
+                            <br>• "What are the latest job market trends?"
+                            <br><br>
+                            <em>For personalized advice and full AI features, please log in!</em>
+                        </p>
+                        <span class="text-xs text-gray-500 mt-1 block">Just now</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="bg-white border-t p-4">
+                <form id="chatForm" class="flex space-x-2">
+                    <input type="text" id="messageInput" placeholder="Ask me anything about your career..." 
+                           class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-40 hidden" onclick="toggleSidebar()"></div>
+
+    <script src="app.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+        }
+
+        function addMessage(content, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="w-8 h-8 ${isUser ? 'bg-gray-100' : 'bg-blue-100'} rounded-full flex items-center justify-center">
+                    <span class="${isUser ? 'text-gray-600' : 'text-blue-600'}">${isUser ? '👤' : '🤖'}</span>
+                </div>
+                <div class="${isUser ? 'bg-gray-100' : 'bg-blue-50'} rounded-lg p-3 max-w-md">
+                    <p class="text-sm text-gray-800">${content}</p>
+                    <span class="text-xs text-gray-500 mt-1 block">${time}</span>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage(message) {
+            try {
+                const token = localStorage.getItem('access_token');
+                if (!token) {
+                    console.log('No access token found, providing demo response');
+                    return getOfflineResponse(message);
+                }
+
+                const response = await fetch('/chatbot/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') || ''
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                
+                if (response.status === 401) {
+                    localStorage.removeItem('access_token'); // Clear invalid token
+                    return getOfflineResponse(message); // Provide demo response instead of error
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    // Fallback to demo mode for any API issues
+                    return getOfflineResponse(message);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                // Return the response from the API
+                return data.response || data.message || "I received your message but couldn't generate a proper response.";
+            } catch (error) {
+                console.error('Error sending message:', error);
+                
+                // Always fallback to demo mode for any errors
+                return getOfflineResponse(message);
+            }
+        }
+
+        // Demo function for when user is not authenticated
+        function getOfflineResponse(message) {
+            const text = message.toLowerCase();
+            
+            if (text.includes('skill') && (text.includes('software') || text.includes('development') || text.includes('programming'))) {
+                return `🚀 **Essential Software Development Skills:**
+
+**Programming Languages:**
+• **Python** - Great for beginners, versatile for web, data science, automation
+• **JavaScript** - Essential for web development (frontend + backend with Node.js)
+• **Java** - Popular for enterprise applications and Android development
+• **SQL** - Critical for database work and data analysis
+• **TypeScript** - JavaScript with types, increasingly popular
+
+**Frameworks & Tools:**
+• **React/Vue.js** - Modern frontend frameworks
+• **Django/Express.js** - Backend frameworks
+• **Git** - Version control (absolutely essential)
+• **Docker** - Containerization for deployment
+• **AWS/Azure** - Cloud platforms
+
+**Core Concepts:**
+• Data structures and algorithms
+• Object-oriented programming
+• Database design and optimization
+• RESTful API development
+• Testing and debugging methodologies
+• Agile development practices
+
+**Learning Path Recommendation:**
+1️⃣ **Start with Python or JavaScript** (pick one)
+2️⃣ **Learn Git** and create a GitHub profile
+3️⃣ **Build 2-3 small projects** to practice
+4️⃣ **Learn a framework** (React for frontend, Django for backend)
+5️⃣ **Study data structures and algorithms**
+6️⃣ **Deploy projects** to build DevOps skills
+
+💡 **Pro tip:** Focus on one language first and build real projects. Employers value practical experience over theoretical knowledge!`;
+            }
+            
+            if (text.includes('market') && text.includes('trend')) {
+                return `📈 **Latest Job Market Trends (2024-2025):**
+
+**High-Demand Roles:**
+• **AI/ML Engineers** - Explosive growth in AI applications
+• **Cloud Engineers** - AWS, Azure, GCP expertise in demand
+• **Cybersecurity Specialists** - Rising security concerns
+• **DevOps Engineers** - Automation and CI/CD focus
+• **Data Scientists** - Data-driven decision making
+• **Full-Stack Developers** - Versatility highly valued
+
+**Hot Technologies:**
+• **AI/ML:** Python, TensorFlow, PyTorch
+• **Cloud:** Kubernetes, Docker, Terraform
+• **Frontend:** React, Next.js, TypeScript
+• **Backend:** Node.js, Python, Go
+• **Databases:** PostgreSQL, MongoDB, Redis
+
+**Salary Trends:**
+• Software Engineer: $70K-$180K
+• Data Scientist: $80K-$200K
+• ML Engineer: $100K-$250K
+• DevOps Engineer: $85K-$190K
+
+**Remote Work Impact:**
+• 70% of tech roles offer remote/hybrid options
+• Geographic salary gaps are narrowing
+• Focus on results over hours worked
+
+**Skills Gap Opportunities:**
+• AI/ML implementation skills
+• Cloud architecture design
+• Cybersecurity expertise
+• Mobile app development`;
+            }
+            
+            if (text.includes('resume')) {
+                return `📄 **Resume Tips for Tech Roles:**
+
+**Format & Structure:**
+• **Keep it clean** - ATS-friendly, consistent formatting
+• **1-2 pages max** - Concise but comprehensive
+• **Professional email** - firstname.lastname@domain.com
+• **Include links** - GitHub, LinkedIn, portfolio website
+
+**Technical Skills Section:**
+• **Group by category** - Languages, Frameworks, Tools, Databases
+• **Be honest** - Only list technologies you can discuss confidently
+• **Use keywords** - Match job description requirements
+• **Show proficiency levels** - If space allows
+
+**Project Section (Critical!):**
+• **2-3 strong projects** with GitHub links
+• **Quantify impact** - "Improved performance by 30%"
+• **Explain tech stack** - What technologies you used and why
+• **Show problem-solving** - What challenge did you solve?
+
+**Experience Section:**
+• **Use action verbs** - Built, developed, optimized, implemented
+• **Include metrics** - Users served, performance improvements
+• **Focus on impact** - Business value, not just tasks
+
+**Common Mistakes to Avoid:**
+• ❌ Generic objective statements
+• ❌ Listing every technology you've touched
+• ❌ No GitHub/portfolio links
+• ❌ Focusing on duties instead of achievements
+
+💡 **Pro tip:** Tailor your resume for each application by emphasizing relevant skills and projects!`;
+            }
+            
+            if (text.includes('interview')) {
+                return `🎯 **Technical Interview Preparation:**
+
+**Coding Interviews:**
+• **Practice platforms:** LeetCode, HackerRank, CodeSignal
+• **Focus areas:** Arrays, strings, trees, graphs, dynamic programming
+• **Study patterns:** Two pointers, sliding window, BFS/DFS
+• **Time complexity:** Understand Big O notation
+• **Practice explaining:** Think out loud during problem-solving
+
+**System Design (Mid-Senior level):**
+• **Learn fundamentals:** Load balancing, caching, databases
+• **Practice designing:** URL shortener, chat system, news feed
+• **Understand trade-offs:** Consistency vs availability, SQL vs NoSQL
+• **Study real systems:** How do Twitter, Netflix, Uber work?
+
+**Behavioral Questions (STAR method):**
+• **Situation:** Describe the context
+• **Task:** Explain what needed to be done
+• **Action:** Detail what you did
+• **Result:** Share the outcome with metrics
+
+**Common Technical Questions:**
+• "Walk me through your recent project"
+• "How would you optimize this code?"
+• "Explain a technical challenge you overcame"
+• "Why did you choose this technology stack?"
+
+**Day Before Interview:**
+• Review your resume and projects thoroughly
+• Research the company and their tech stack
+• Prepare thoughtful questions to ask them
+• Get a good night's sleep!
+
+💡 **Pro tip:** Practice coding on a whiteboard or paper, not just on a computer!`;
+            }
+            
+            if (text.includes('career') && (text.includes('path') || text.includes('change') || text.includes('guidance') || text.includes('choose'))) {
+                return `🗺️ **Career Path Guidance:**
+
+**Popular Tech Career Paths:**
+
+💻 **Frontend Developer**
+• Focus: User interfaces, user experience
+• Technologies: React, Vue.js, HTML/CSS, JavaScript
+• Salary: $65K-$150K
+• Growth: High demand, creative + technical
+
+🛠️ **Backend Developer**
+• Focus: Server logic, databases, APIs
+• Technologies: Python, Java, Node.js, SQL
+• Salary: $70K-$170K
+• Growth: Always in demand, scalable systems
+
+🌐 **Full-Stack Developer**
+• Focus: Both frontend and backend
+• Technologies: React + Node.js or Django
+• Salary: $75K-$160K
+• Growth: Versatile, good for startups
+
+📈 **Data Scientist**
+• Focus: Data analysis, machine learning
+• Technologies: Python, R, SQL, TensorFlow
+• Salary: $80K-$200K
+• Growth: AI boom driving demand
+
+☁️ **DevOps Engineer**
+• Focus: Deployment, infrastructure, automation
+• Technologies: AWS, Docker, Kubernetes, CI/CD
+• Salary: $85K-$190K
+• Growth: Critical for modern development
+
+📱 **Mobile Developer**
+• Focus: iOS/Android applications
+• Technologies: Swift, Kotlin, React Native
+• Salary: $70K-$160K
+• Growth: Mobile-first world
+
+**Career Change Tips:**
+1️⃣ **Identify transferable skills** from your current role
+2️⃣ **Build a portfolio** of relevant projects
+3️⃣ **Network** with professionals in your target field
+4️⃣ **Consider bootcamps** or online courses for structured learning
+5️⃣ **Start with freelance** or volunteer projects to gain experience
+
+💡 **Pro tip:** Choose based on your interests - love visual design? Go frontend. Enjoy data and analysis? Try data science!`;
+            }
+            
+            // Default response for general questions
+            return `👋 **Hello! I'm your AI career assistant.**
+
+I can help you with:
+• **🚀 Skills development** - What to learn and how
+• **📄 Resume optimization** - Make your resume stand out
+• **🎯 Interview prep** - Technical and behavioral questions
+• **🗺️ Career guidance** - Find your path in tech
+• **📈 Market insights** - Latest trends and opportunities
+
+**Popular Questions:**
+• "What skills should I learn for software development?"
+• "How can I improve my resume?"
+• "Help me prepare for interviews"
+• "What are the latest job market trends?"
+• "Help me choose a career path"
+
+🎆 *You're currently using demo mode with expert career advice!*
+🔒 *Log in for personalized AI responses and advanced features.*
+
+What would you like to know about your career journey?`;
+        }
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, true);
+            messageInput.value = '';
+            
+            const response = await sendMessage(message);
+            addMessage(response);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Protect page - redirect to login if not authenticated
+            if (!protectPage()) {
+                return;
+            }
+            document.getElementById('messageInput').focus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Roadmap - DelphiMinds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 60px;
+            height: 100%;
+            width: 2px;
+            background: #e5e7eb;
+        }
+        .timeline-item:last-child:before {
+            display: none;
+        }
+        .milestone-completed {
+            background: #10b981;
+            color: white;
+        }
+        .milestone-in-progress {
+            background: #f59e0b;
+            color: white;
+        }
+        .milestone-pending {
+            background: #6b7280;
+            color: white;
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: 251.2;
+            transition: stroke-dashoffset 0.35s;
+        }
+    </style>
+</head>
+<body class="bg-blue-50">
+    <nav class="bg-blue-900 shadow-sm border-b border-blue-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold text-white hover:text-cyan-200 transition-colors">
+                        DelphiMinds
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="dashboard.html" class="text-gray-700 hover:text-gray-900">Dashboard</a>
+                    <a href="insights.html" class="text-gray-700 hover:text-gray-900">Insights</a>
+                    <a href="community.html" class="text-gray-700 hover:text-gray-900">Community</a>
+                    <a href="roadmap.html" class="text-blue-600 font-medium">Roadmap</a>
+                    <a href="chat.html" class="text-gray-700 hover:text-gray-900">Chat</a>
+                    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Career Roadmap</h1>
+            <p class="mt-2 text-gray-600">AI-powered personalized learning paths and career progression plans</p>
+        </div>
+
+        <!-- Roadmap Creation Form -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6" id="roadmapForm">
+            <h2 class="text-xl font-semibold mb-4">Create Your Personalized Roadmap</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Target Career</label>
+                    <select id="targetCareer" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select a career path...</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Learning Style</label>
+                    <select id="learningStyle" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="mixed">Mixed Approach</option>
+                        <option value="self_paced">Self-Paced Courses</option>
+                        <option value="bootcamp">Bootcamps</option>
+                        <option value="certification">Certifications</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Study Hours per Week</label>
+                    <input type="number" id="hoursPerWeek" value="10" min="1" max="40" 
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Skills (Optional)</label>
+                    <button type="button" onclick="toggleSkillsInput()" 
+                            class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">
+                        <i class="fas fa-plus mr-2"></i>Add Current Skills
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Current Skills Input -->
+            <div id="skillsInput" class="mt-6 hidden">
+                <h3 class="text-lg font-medium mb-3">Enter Your Current Skills</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="skillsList">
+                    <!-- Skills will be added dynamically -->
+                </div>
+                <button type="button" onclick="addSkillInput()" 
+                        class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    <i class="fas fa-plus mr-2"></i>Add Skill
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <button onclick="createRoadmap()" 
+                        class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 text-lg font-semibold">
+                    <i class="fas fa-route mr-2"></i>Generate My Roadmap
+                </button>
+            </div>
+        </div>
+
+        <!-- Existing Roadmaps -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6" id="existingRoadmaps" style="display: none;">
+            <h2 class="text-xl font-semibold mb-4">Your Roadmaps</h2>
+            <div id="roadmapsList">
+                <!-- Existing roadmaps will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Personalized Dashboard -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6" id="personalizedDashboard" style="display: none;">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold">Personalized Dashboard</h2>
+                <button onclick="downloadPDF()" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">
+                    <i class="fas fa-download mr-2"></i>Download PDF
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Progress Overview -->
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+                    <h3 class="text-lg font-semibold mb-4">Overall Progress</h3>
+                    <div class="flex items-center justify-center">
+                        <div class="relative w-24 h-24">
+                            <svg class="progress-ring w-24 h-24">
+                                <circle class="progress-ring-circle stroke-white stroke-opacity-30" stroke-width="4" 
+                                        fill="transparent" r="40" cx="48" cy="48"/>
+                                <circle class="progress-ring-circle stroke-white" stroke-width="4" 
+                                        fill="transparent" r="40" cx="48" cy="48" id="progressCircle"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" id="progressPercentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center mt-2 text-blue-100">Roadmap Completion</p>
+                </div>
+                
+                <!-- Job Readiness Score -->
+                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-6 text-white">
+                    <h3 class="text-lg font-semibold mb-4">Job Readiness</h3>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold mb-2" id="jobReadinessScore">0</div>
+                        <div class="text-green-100">out of 100</div>
+                        <div class="mt-2 text-sm text-green-100" id="readinessStatus">Getting Started</div>
+                    </div>
+                </div>
+                
+                <!-- Timeline -->
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+                    <h3 class="text-lg font-semibold mb-4">Timeline</h3>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold mb-2" id="estimatedCompletion">-</div>
+                        <div class="text-purple-100">Estimated Completion</div>
+                        <div class="mt-2 text-sm text-purple-100" id="hoursRemaining">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skill Gap Analysis -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-4">Skill Gap Analysis</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="skillGapAnalysis">
+                    <!-- Skill gaps will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Timeline -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6" id="roadmapTimeline" style="display: none;">
+            <h2 class="text-xl font-semibold mb-4">Interactive Roadmap Timeline</h2>
+            
+            <!-- Phase Tabs -->
+            <div class="flex space-x-4 mb-6">
+                <button class="phase-tab active bg-blue-600 text-white px-4 py-2 rounded-md" data-phase="Foundation">
+                    Foundation (0-3 months)
+                </button>
+                <button class="phase-tab bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-phase="Intermediate">
+                    Intermediate (3-6 months)
+                </button>
+                <button class="phase-tab bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-phase="Advanced">
+                    Advanced (6-12 months)
+                </button>
+                <button class="phase-tab bg-gray-200 text-gray-700 px-4 py-2 rounded-md" data-phase="Specialization">
+                    Specialization (12+ months)
+                </button>
+            </div>
+            
+            <!-- Timeline Content -->
+            <div id="timelineContent">
+                <!-- Milestones will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Job Readiness Breakdown -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6" id="jobReadinessBreakdown" style="display: none;">
+            <h2 class="text-xl font-semibold mb-4">Job Readiness Breakdown</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <canvas id="readinessChart" width="400" height="300"></canvas>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium mb-4">Recommendations</h3>
+                    <div id="readinessRecommendations">
+                        <!-- Recommendations will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        let currentRoadmap = null;
+        let careerPaths = [];
+        let skillInputCounter = 0;
+        let currentPhase = 'Foundation';
+        let readinessChart = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCareerPaths();
+            await loadExistingRoadmaps();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.querySelectorAll('.phase-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => switchPhase(e.target.dataset.phase));
+            });
+        }
+
+        async function loadCareerPaths() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('/careers/paths/', {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+                careerPaths = await response.json();
+                updateCareerPathsSelect();
+            } catch (error) {
+                console.error('Error loading career paths:', error);
+            }
+        }
+
+        function updateCareerPathsSelect() {
+            const select = document.getElementById('targetCareer');
+            select.innerHTML = '<option value="">Select a career path...</option>';
+            careerPaths.forEach(path => {
+                const option = document.createElement('option');
+                option.value = path.id;
+                option.textContent = path.title;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadExistingRoadmaps() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('/careers/personalized-roadmap/', {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const roadmaps = await response.json();
+                    if (roadmaps.length > 0) {
+                        updateExistingRoadmaps(roadmaps);
+                        document.getElementById('existingRoadmaps').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading existing roadmaps:', error);
+            }
+        }
+
+        function updateExistingRoadmaps(roadmaps) {
+            const container = document.getElementById('roadmapsList');
+            container.innerHTML = roadmaps.map(roadmap => `
+                <div class="border rounded-lg p-4 mb-4 cursor-pointer hover:shadow-md" onclick="loadRoadmap(${roadmap.id})">
+                    <h3 class="font-semibold text-lg">${roadmap.title}</h3>
+                    <p class="text-gray-600 text-sm">${roadmap.target_career.title}</p>
+                    <div class="mt-2 flex space-x-4 text-sm text-gray-500">
+                        <span><i class="fas fa-clock mr-1"></i>${roadmap.estimated_completion_weeks} weeks</span>
+                        <span><i class="fas fa-chart-line mr-1"></i>${roadmap.overall_progress_percentage.toFixed(1)}%</span>
+                        <span><i class="fas fa-star mr-1"></i>Score: ${roadmap.job_readiness_score}/100</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleSkillsInput() {
+            document.getElementById('skillsInput').classList.toggle('hidden');
+        }
+
+        function addSkillInput() {
+            const container = document.getElementById('skillsList');
+            const skillDiv = document.createElement('div');
+            skillDiv.className = 'flex space-x-2';
+            skillDiv.innerHTML = `
+                <input type="text" placeholder="Skill name" class="flex-1 border border-gray-300 rounded-md px-3 py-2 skill-name">
+                <select class="border border-gray-300 rounded-md px-3 py-2 skill-level">
+                    <option value="20">Beginner (20)</option>
+                    <option value="40">Novice (40)</option>
+                    <option value="60">Intermediate (60)</option>
+                    <option value="80">Advanced (80)</option>
+                    <option value="100">Expert (100)</option>
+                </select>
+                <button type="button" onclick="this.parentElement.remove()" class="bg-red-500 text-white px-3 py-2 rounded-md">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(skillDiv);
+        }
+
+        function getCurrentSkills() {
+            const skills = {};
+            document.querySelectorAll('#skillsList > div').forEach(input => {
+                const nameInput = input.querySelector('.skill-name');
+                const levelSelect = input.querySelector('.skill-level');
+                if (nameInput.value.trim()) {
+                    skills[nameInput.value.trim()] = parseInt(levelSelect.value);
+                }
+            });
+            return skills;
+        }
+
+        async function createRoadmap() {
+            const targetCareer = document.getElementById('targetCareer').value;
+            if (!targetCareer) {
+                showError('Please select a target career');
+                return;
+            }
+            
+            const roadmapData = {
+                target_career_id: parseInt(targetCareer),
+                learning_style: document.getElementById('learningStyle').value,
+                hours_per_week: parseInt(document.getElementById('hoursPerWeek').value),
+                current_skills: getCurrentSkills()
+            };
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('/careers/personalized-roadmap/', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(roadmapData)
+                });
+                
+                const roadmap = await response.json();
+                currentRoadmap = roadmap;
+                showSuccess('Roadmap created successfully!');
+                await loadRoadmapDetails(roadmap.id);
+                document.getElementById('roadmapForm').style.display = 'none';
+                showRoadmapSections();
+            } catch (error) {
+                console.error('Error creating roadmap:', error);
+                showError('Failed to create roadmap');
+            }
+        }
+
+        async function loadRoadmap(roadmapId) {
+            await loadRoadmapDetails(roadmapId);
+            document.getElementById('roadmapForm').style.display = 'none';
+            showRoadmapSections();
+        }
+
+        async function loadRoadmapDetails(roadmapId) {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('/careers/personalized-roadmap/', {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const roadmaps = await response.json();
+                    currentRoadmap = roadmaps.find(r => r.id === roadmapId) || roadmaps[0];
+                    if (currentRoadmap) {
+                        updatePersonalizedDashboard();
+                        await loadMilestones(currentRoadmap.id);
+                        await loadJobReadinessScore(currentRoadmap.id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading roadmap details:', error);
+            }
+        }
+
+        function showRoadmapSections() {
+            ['personalizedDashboard', 'roadmapTimeline', 'jobReadinessBreakdown'].forEach(id => {
+                document.getElementById(id).style.display = 'block';
+            });
+        }
+
+        function updatePersonalizedDashboard() {
+            if (!currentRoadmap) return;
+            
+            const progress = currentRoadmap.overall_progress_percentage || 0;
+            document.getElementById('progressPercentage').textContent = `${progress.toFixed(1)}%`;
+            
+            const circle = document.getElementById('progressCircle');
+            const offset = 251.2 - (progress / 100) * 251.2;
+            circle.style.strokeDashoffset = offset;
+            
+            document.getElementById('jobReadinessScore').textContent = currentRoadmap.job_readiness_score || 0;
+            
+            const score = currentRoadmap.job_readiness_score || 0;
+            let status = 'Getting Started';
+            if (score >= 80) status = 'Job Ready!';
+            else if (score >= 60) status = 'Almost There';
+            else if (score >= 40) status = 'Making Progress';
+            else if (score >= 20) status = 'Building Foundation';
+            document.getElementById('readinessStatus').textContent = status;
+            
+            const months = ((currentRoadmap.estimated_completion_weeks || 0) / 4.33).toFixed(1);
+            document.getElementById('estimatedCompletion').textContent = `${months} months`;
+            
+            if (currentRoadmap.skill_gap_analysis) {
+                updateSkillGapAnalysis(currentRoadmap.skill_gap_analysis);
+            }
+        }
+
+        function updateSkillGapAnalysis(skillGap) {
+            const container = document.getElementById('skillGapAnalysis');
+            container.innerHTML = `
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h4 class="font-semibold text-red-800 mb-2">Missing Skills</h4>
+                    <div class="text-sm text-red-700">
+                        ${skillGap.missing_skills.length === 0 ? '<p>No missing skills!</p>' :
+                            skillGap.missing_skills.map(skill => `<span class="inline-block bg-red-100 px-2 py-1 rounded mr-1 mb-1">${skill}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h4 class="font-semibold text-yellow-800 mb-2">Skills to Improve</h4>
+                    <div class="text-sm text-yellow-700">
+                        ${skillGap.weak_skills.length === 0 ? '<p>All skills at required level!</p>' :
+                            skillGap.weak_skills.map(skill => `<span class="inline-block bg-yellow-100 px-2 py-1 rounded mr-1 mb-1">${skill.skill}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h4 class="font-semibold text-green-800 mb-2">Strong Skills</h4>
+                    <div class="text-sm text-green-700">
+                        ${skillGap.strong_skills.length === 0 ? '<p>Keep learning!</p>' :
+                            skillGap.strong_skills.map(skill => `<span class="inline-block bg-green-100 px-2 py-1 rounded mr-1 mb-1">${skill.skill}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadMilestones(roadmapId) {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`/careers/roadmap/${roadmapId}/milestones/`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const milestones = await response.json();
+                    updateTimelineContent(milestones);
+                }
+            } catch (error) {
+                console.error('Error loading milestones:', error);
+            }
+        }
+
+        function updateTimelineContent(milestones) {
+            const phaseMilestones = milestones.filter(m => m.phase === currentPhase);
+            const container = document.getElementById('timelineContent');
+            
+            if (phaseMilestones.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No milestones in this phase</p>';
+                return;
+            }
+            
+            container.innerHTML = phaseMilestones.map((milestone, index) => `
+                <div class="timeline-item relative pl-12 pb-8">
+                    <div class="absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold milestone-${milestone.status}">
+                        ${milestone.status === 'completed' ? '<i class="fas fa-check"></i>' :
+                          milestone.status === 'in_progress' ? '<i class="fas fa-play"></i>' : index + 1}
+                    </div>
+                    <div class="bg-white border rounded-lg p-4 shadow-sm">
+                        <h3 class="font-semibold text-lg">${milestone.title}</h3>
+                        <p class="text-gray-600 mb-3">${milestone.description}</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-2">
+                                <button onclick="updateMilestoneStatus(${milestone.id}, 'in_progress')" 
+                                        class="bg-yellow-500 text-white px-3 py-1 rounded text-sm">
+                                    Start
+                                </button>
+                                <button onclick="updateMilestoneStatus(${milestone.id}, 'completed')" 
+                                        class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+                                    Complete
+                                </button>
+                            </div>
+                            <span class="text-sm text-gray-500">${milestone.estimated_hours} hours</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchPhase(phase) {
+            currentPhase = phase;
+            document.querySelectorAll('.phase-tab').forEach(tab => {
+                tab.className = tab.dataset.phase === phase ? 
+                    'phase-tab active bg-blue-600 text-white px-4 py-2 rounded-md' :
+                    'phase-tab bg-gray-200 text-gray-700 px-4 py-2 rounded-md';
+            });
+            if (currentRoadmap) loadMilestones(currentRoadmap.id);
+        }
+
+        async function updateMilestoneStatus(milestoneId, status) {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`/careers/roadmap/${currentRoadmap.id}/milestones/${milestoneId}/`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                
+                if (response.ok) {
+                    showSuccess(`Milestone ${status}!`);
+                    await loadMilestones(currentRoadmap.id);
+                    await loadRoadmapDetails(currentRoadmap.id);
+                }
+            } catch (error) {
+                console.error('Error updating milestone:', error);
+            }
+        }
+
+        async function loadJobReadinessScore(roadmapId) {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`/careers/roadmap/${roadmapId}/job-readiness/`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    updateJobReadinessBreakdown(data);
+                }
+            } catch (error) {
+                console.error('Error loading job readiness score:', error);
+            }
+        }
+
+        function updateJobReadinessBreakdown(data) {
+            const ctx = document.getElementById('readinessChart').getContext('2d');
+            if (readinessChart) readinessChart.destroy();
+            
+            readinessChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Skills', 'Projects', 'Certifications', 'Interviews'],
+                    datasets: [{
+                        data: [
+                            data.breakdown.skills_assessment.score,
+                            data.breakdown.project_portfolio.score,
+                            data.breakdown.certifications.score,
+                            data.breakdown.interview_readiness.score
+                        ],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: `Job Readiness: ${data.job_readiness_score}/100` }
+                    }
+                }
+            });
+            
+            document.getElementById('readinessRecommendations').innerHTML = 
+                data.recommendations.map(rec => `<div class="mb-3 p-3 bg-blue-50 rounded"><p class="text-sm text-blue-800">${rec}</p></div>`).join('');
+        }
+
+        async function downloadPDF() {
+            if (!currentRoadmap) return showError('No roadmap to download');
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                doc.setFontSize(20);
+                doc.text('Career Roadmap', 20, 30);
+                doc.setFontSize(14);
+                doc.text(`Target: ${currentRoadmap.target_career.title}`, 20, 50);
+                doc.text(`Progress: ${currentRoadmap.overall_progress_percentage.toFixed(1)}%`, 20, 65);
+                doc.text(`Job Readiness: ${currentRoadmap.job_readiness_score}/100`, 20, 80);
+                doc.save(`roadmap-${currentRoadmap.target_career.title.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+                showSuccess('PDF downloaded!');
+            } catch (error) {
+                showError('Failed to generate PDF');
+            }
+        }
+
+        function showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => document.body.removeChild(notification), 3000);
+        }
+
+        function showError(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => document.body.removeChild(notification), 5000);
+        }
+    </script>
+</body>
+</html>
