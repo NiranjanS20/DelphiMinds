@@ -12,9 +12,9 @@
       <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <a href="#" class="font-bold text-xl">DelphiMinds</a>
         <div class="space-x-4" id="nav-links">
-          <a href="login.html" class="text-sm text-blue-600" id="login-link">Login</a>
-          <a href="signup.html" class="text-sm text-blue-600" id="signup-link">Sign Up</a>
-          <a href="dashboard.html" class="text-sm text-blue-600 hidden" id="dashboard-link">Dashboard</a>
+          <a href="frontend/login.html" class="text-sm text-blue-600" id="login-link">Login</a>
+          <a href="frontend/signup.html" class="text-sm text-blue-600" id="signup-link">Sign Up</a>
+          <a href="frontend/dashboard.html" class="text-sm text-blue-600 hidden" id="dashboard-link">Dashboard</a>
           <button onclick="logout()" class="text-sm text-red-600 hidden" id="logout-btn">Logout</button>
         </div>
       </div>
@@ -22,7 +22,7 @@
     <header class="max-w-6xl mx-auto px-4 py-16">
       <h1 class="text-4xl font-bold mb-4">Personalized Career & Skills Advisor</h1>
       <p class="text-lg text-gray-600 mb-6">Assess your skills, discover career paths, and get AI-powered guidance.</p>
-      <a href="login.html" class="px-5 py-3 bg-blue-600 text-white rounded" id="cta-btn">Get Started</a>
+      <a href="frontend/login.html" class="px-5 py-3 bg-blue-600 text-white rounded" id="cta-btn">Get Started</a>
     </header>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -37,12 +37,13 @@
           // Change CTA button
           const ctaBtn = document.getElementById('cta-btn');
           ctaBtn.textContent = 'Go to Dashboard';
-          ctaBtn.href = 'dashboard.html';
+          ctaBtn.href = 'frontend/dashboard.html';
         }
       });
     </script>
     <footer class="border-t py-6 text-center text-sm text-gray-500">© 2025 DelphiMinds</footer>
   </body>
   </html>
+
 
 
